@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from app.configs.connection import WeaviateClient
+from app.services.health_check_service import HealthCheckService
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -16,6 +17,4 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/api/health-check")
 async def health_check():
-    return {
-        "status": "ok"
-    }
+    return HealthCheckService().handle()
