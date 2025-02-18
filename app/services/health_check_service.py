@@ -4,5 +4,6 @@ class HealthCheckService(BaseService):
 
     def handle(self):
         return {
-            "status": "ok"
+            "status": 200,
+            "message": "healthy"
         }
