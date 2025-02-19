@@ -1,7 +1,7 @@
 import uuid
 import hashlib
 
-def generate_unique_id(uuid1: str, uuid2: str, algo: str = "sha256") -> str:
+def generate_unique_id(uuid1: str, uuid2: str, algo: str = "md5") -> str:
     """
     Generate a unique ID based on two UUIDs using a specified hashing algorithm.
 

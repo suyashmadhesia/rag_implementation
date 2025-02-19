@@ -5,8 +5,8 @@ from app.utils.storage import LocalStorage
 
 class SessionService(BaseService):
 
-    def __init__(self, query = None, response = None, body = None, headers = None, files = None, **kwargs):
-        super().__init__(query, response, body, headers, files, **kwargs)
+    def __init__(self, query = None, response = None, body = None, headers = None, files = None, request=None,**kwargs):
+        super().__init__(request, query, response, body, headers, files, **kwargs)
         self.local_storage = LocalStorage()
 
     def _create_session(self):
@@ -22,15 +22,11 @@ class SessionService(BaseService):
         if not session_id:
             raise HTTPException(status_code=400, detail="Session ID is required")
         if not session_id:
-            return {
-                "message": "session_id not found"
-            }
+            raise HTTPException(status_code=404, detail="Session not found")
         session_details = self.local_storage.get_session(session_id)
         session_files = self.local_storage.get_session_file(session_id)
         if not session_details:
-            return {
-                "message": "session not found"
-            }
+            raise HTTPException(status_code=404, detail="Session not found")
         return {
             "message": "ok",
             "session": session_details.to_json(),
