@@ -19,7 +19,7 @@ class FileUploadService(BaseService):
             raise ValueError("Unsupported file type")
 
     async def handle(self):
-        session_id = self.headers.get("session_id")
+        session_id = self.headers.get("request_id")
         if not session_id:
             raise HTTPException(status_code=400, detail="Session ID is required")
         if not self.files or len(self.files) != 1:

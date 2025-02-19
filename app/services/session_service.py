@@ -11,14 +11,14 @@ class SessionService(BaseService):
 
     def _create_session(self):
         session_id = self.local_storage.create_session()
-        self.response.set_cookie(key="session_id", value=session_id, httponly=True)
+        self.response.set_cookie(key="request_id", value=session_id, httponly=True)
         return {
             "message": "ok"
         }
     
 
     def _fetch_session_details(self):
-        session_id = self.headers.get("session_id")
+        session_id = self.headers.get("request_id")
         if not session_id:
             raise HTTPException(status_code=400, detail="Session ID is required")
         if not session_id:

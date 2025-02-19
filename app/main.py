@@ -39,7 +39,7 @@ async def create_session(response: Response):
 async def get_session(request: Request):
     """API to get a session."""
     return SessionService(
-        headers={"session_id": request.cookies.get("session_id")}
+        headers={"request_id": request.cookies.get("request_id")}
     ).handle("fetch")
 
 
@@ -47,5 +47,5 @@ async def get_session(request: Request):
 async def upload_file(request: Request, file: UploadFile = File(...)):
     """API to upload a single file."""
     return await FileUploadService(files=[file], headers={
-        "session_id": request.cookies.get("session_id")
+        "request_id": request.cookies.get("request_id")
     }).handle()
