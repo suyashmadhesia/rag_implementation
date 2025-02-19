@@ -11,7 +11,7 @@ class SessionStorage:
     created_at: int = int(time.time())
 
     def to_json(self):
-        return json.dumps(asdict(self))
+        return asdict(self)
 
 @dataclass
 class FileStorage:
@@ -19,9 +19,10 @@ class FileStorage:
     session_id: str
     file_id: str
     file_name: str
+    file_type: str
     file_size: int
     created_at: int = int(time.time())
 
     def to_json(self):
-        return json.dumps(asdict(self))
+        return asdict(self)
     

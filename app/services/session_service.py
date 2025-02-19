@@ -1,4 +1,4 @@
-from fastapi import Response
+from fastapi import HTTPException, Response
 from .base import BaseService
 from app.utils.storage import LocalStorage
 
@@ -20,6 +20,8 @@ class SessionService(BaseService):
     def _fetch_session_details(self):
         session_id = self.headers.get("session_id")
         if not session_id:
+            raise HTTPException(status_code=400, detail="Session ID is required")
+        if not session_id:
             return {
                 "message": "session_id not found"
             }
@@ -39,7 +41,7 @@ class SessionService(BaseService):
         if path == "create":
             return self._create_session()
         elif path == "fetch":
-            return 
+            return self._fetch_session_details()
         else:
             raise NotImplementedError("Unsupported path")
     

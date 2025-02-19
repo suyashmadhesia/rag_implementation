@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from fastapi import  Response, UploadFile
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ class BaseService:
         response: Optional[Response] = None,
         body: Optional[BaseModel] = None,
         headers: Optional[Dict[str, Any]] = None,
-        files: Optional[Dict[str, UploadFile]] = None,
+        files: Optional[List[UploadFile]] = None,
         **kwargs: Any
     ):
         self.query = query

@@ -1,37 +1,37 @@
 from .base import BaseService
 from app.schemas.response_schemas import UploadFileResponse
-from app.utils.media_utils import process_pdf, process_docx, process_json
+from app.core.pipelines import *
 from fastapi import HTTPException
 
 
 class FileUploadService(BaseService):
 
-    def _process_file(self, filename: str, contents: bytes):
+    async def _process_file(self, filename: str, session_id: str):
         if filename.endswith(".pdf"):
-            return process_pdf(contents)
+            return await PDFIngestionPipeline(session_id=session_id).process(self.files[0])
         elif filename.endswith(".docx"):
-            return process_docx(contents)
+            return await DocxIngestionPipeline(session_id=session_id).process(self.files[0])
         elif filename.endswith(".txt"):
-            return contents.decode("utf-8")
+            return await TextIngestionPipeline(session_id=session_id).process(self.files[0])
         elif filename.endswith(".json"):
-            return process_json(contents)
+            return await JSONIngestionPipeline(session_id=session_id).process(self.files[0])
         else:
             raise ValueError("Unsupported file type")
 
     async def handle(self):
+        session_id = self.headers.get("session_id")
+        if not session_id:
+            raise HTTPException(status_code=400, detail="Session ID is required")
         if not self.files or len(self.files) != 1:
             raise HTTPException(
                 status_code=400, detail="Only one file can be uploaded at a time"
             )
-        file_id, file_obj = next(iter(self.files.items()))
-
+        file =self.files[0]
         try:
-            content = await file_obj.read()
-            file_text: str = self._process_file(file_obj.filename, content)
-
+            canonical_id = await self._process_file(file.filename, session_id)
             return UploadFileResponse(
-                filename=file_obj.filename,
-                file_id=str(file_id),
+                filename=file.filename,
+                file_id=canonical_id,
                 status=201,
                 message="File uploaded successfully",
             )

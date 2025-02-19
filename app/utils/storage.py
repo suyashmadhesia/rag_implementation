@@ -14,6 +14,12 @@ class LocalStorage:
             cls._instance._sessions = sessions
             cls._instance._files = files
         return cls._instance
+    
+    def allow_storing(self, session_id):
+        session = self.get_session(session_id)
+        if session.storage_usage < self._max_file_store:
+            return True
+        return False
 
     def create_session(self):
         """Creates a new session and returns the session ID."""
@@ -26,7 +32,7 @@ class LocalStorage:
         """Retrieves a session by session ID."""
         return self._sessions.get(session_id)
 
-    def store_file(self, session_id: str, file_id: str, file_size: int, file_name: str):
+    def store_file(self, session_id: str, file_id: str, file_size: int, file_name: str, file_type:str):
         """Stores a file under a given session, enforcing storage limits."""
         if session_id not in self._sessions:
             raise ValueError("Session not found")
@@ -35,11 +41,12 @@ class LocalStorage:
 
         file_storage_id = generate_unique_id(session_id, file_id)
         file = FileStorage(
-            id=str(uuid.uuid4()),
+            id=file_storage_id,
             session_id=session_id,
             file_id=file_id,
             file_size=file_size,
-            file_name=file_name
+            file_name=file_name,
+            file_type=file_type,
         )
 
         self._files[file_storage_id] = file
