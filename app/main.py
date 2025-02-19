@@ -43,9 +43,17 @@ async def get_session(request: Request):
     ).handle("fetch")
 
 
+@app.delete("/api/session")
+async def delete_session(response: Response, request: Request):
+    """API to delete a session."""
+    return SessionService(
+        headers={"request_id": request.cookies.get("request_id")}, response=response
+    ).handle("delete")
+
+
 @app.post("/api/upload", response_model=UploadFileResponse)
 async def upload_file(request: Request, file: UploadFile = File(...)):
     """API to upload a single file."""
-    return await FileUploadService(files=[file], headers={
-        "request_id": request.cookies.get("request_id")
-    }).handle()
+    return await FileUploadService(
+        files=[file], headers={"request_id": request.cookies.get("request_id")}
+    ).handle()
