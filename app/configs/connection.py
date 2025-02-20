@@ -3,6 +3,7 @@ import asyncio
 import logging
 from weaviate import WeaviateAsyncClient
 from weaviate.connect import ConnectionParams
+from weaviate.classes.query import Filter
 from weaviate.exceptions import WeaviateConnectionError
 
 logger = logging.getLogger(__name__)
@@ -52,10 +53,28 @@ class WeaviateClient:
             await self.init()
         return self._client
     
+    async def clear_database(self):
+        """Delete all objects from all classes in Weaviate."""
+        """Delete all objects from all collections in Weaviate v4 async client."""
+        if self._client is None:
+            await self.init()
+        
+        try:
+            # Get list of all collections
+            collection = self._client.collections.get("DocumentChunk")
+            collection.data.delete_many(
+                where=Filter.by_property("name").like("DocumentChunk*"),
+            )
+
+            print("✅ Weaviate database cleared.")
+        except Exception as e:
+            print(f"❌ Error clearing Weaviate database: {e}")
+    
     async def close(self):
         """Properly close the Weaviate async client connection."""
         if self._client is not None:
             try:
+                await self.clear_database()  # Empty the database before closing
                 await self._client.close()
                 print("Weaviate client connection closed.")
             except Exception as e:

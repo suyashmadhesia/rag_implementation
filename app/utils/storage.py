@@ -53,9 +53,9 @@ class LocalStorage:
         self._sessions[session_id].storage_usage += file_size
         return file_storage_id
 
-    def delete_file(self, session_id: str, file_id: str):
+    def delete_file(self, session_id: str, file_storage_id: str):
         """Deletes a file from a session and updates storage usage."""
-        file_storage_id = generate_unique_id(session_id, file_id)
+
 
         if file_storage_id not in self._files:
             raise ValueError("File not found")

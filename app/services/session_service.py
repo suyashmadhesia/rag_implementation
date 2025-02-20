@@ -32,6 +32,7 @@ class SessionService(BaseService):
         }
     
     def _delete_session(self):
+        # also delete data from the weaviate Vector DB
         session_id = self.headers.get("request_id")
         if not session_id:
             raise HTTPException(status_code=400, detail="Session ID is required")
